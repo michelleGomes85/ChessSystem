@@ -31,4 +31,9 @@ public class Position {
 		return String.format("%d, %d", row, colunm);
 	}
 	
+	public void setValues(int row, int column) {		
+		this.row = row;
+		this.colunm = column;
+	}
+	
 }//class Position

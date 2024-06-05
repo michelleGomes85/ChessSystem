@@ -1,6 +1,7 @@
 package chess.pieces;
 
 import boardgame.Board;
+import boardgame.Position;
 import chess.ChessPiece;
 import chess.Color;
 
@@ -14,13 +15,30 @@ public class Rook extends ChessPiece {
 	public String toString() {
 		return "R";
 	}
-	
+
 	@Override
 	public boolean[][] possibleMoves() {
-		
 		boolean[][] matrix = new boolean[getBoard().getRows()][getBoard().getColumns()];
-		
+
+		checkDirection(matrix, -1, 0); // above
+		checkDirection(matrix, 0, -1); // left
+		checkDirection(matrix, 0, 1); // right
+		checkDirection(matrix, 1, 0); // below
+
 		return matrix;
 	}
-	
-}//class Rook
+
+	private void checkDirection(boolean[][] matrix, int rowIncrement, int columnIncrement) {
+		
+		Position positionAux = new Position(position.getRow() + rowIncrement, position.getColunm() + columnIncrement);
+
+		while (getBoard().positionExists(positionAux) && !getBoard().thereIsAPiece(positionAux)) {
+			matrix[positionAux.getRow()][positionAux.getColunm()] = true;
+			positionAux.setValues(positionAux.getRow() + rowIncrement, positionAux.getColunm() + columnIncrement);
+		}
+
+		if (getBoard().positionExists(positionAux) && isThereOpponentPiece(positionAux))
+			matrix[positionAux.getRow()][positionAux.getColunm()] = true;
+	}
+
+}// class Rook
