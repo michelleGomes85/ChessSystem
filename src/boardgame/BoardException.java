@@ -4,7 +4,7 @@ public class BoardException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	
-	public BoardException(String mensagem) {
-		super(mensagem);
+	public BoardException(String message) {
+		super(message);
 	}
 }//class BoardException
