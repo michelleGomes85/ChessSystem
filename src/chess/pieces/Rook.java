@@ -30,15 +30,15 @@ public class Rook extends ChessPiece {
 
 	private void checkDirection(boolean[][] matrix, int rowIncrement, int columnIncrement) {
 		
-		Position positionAux = new Position(position.getRow() + rowIncrement, position.getColunm() + columnIncrement);
+		Position positionAux = new Position(position.getRow() + rowIncrement, position.getColumn() + columnIncrement);
 
 		while (getBoard().positionExists(positionAux) && !getBoard().thereIsAPiece(positionAux)) {
-			matrix[positionAux.getRow()][positionAux.getColunm()] = true;
-			positionAux.setValues(positionAux.getRow() + rowIncrement, positionAux.getColunm() + columnIncrement);
+			matrix[positionAux.getRow()][positionAux.getColumn()] = true;
+			positionAux.setValues(positionAux.getRow() + rowIncrement, positionAux.getColumn() + columnIncrement);
 		}
 
 		if (getBoard().positionExists(positionAux) && isThereOpponentPiece(positionAux))
-			matrix[positionAux.getRow()][positionAux.getColunm()] = true;
+			matrix[positionAux.getRow()][positionAux.getColumn()] = true;
 	}
 
 }// class Rook

@@ -24,25 +24,27 @@ public class King extends ChessPiece {
 
 	@Override
 	public boolean[][] possibleMoves() {
+		
 		boolean[][] matrix = new boolean[getBoard().getRows()][getBoard().getColumns()];
 
-		checkDirection(matrix, -1, 0); // above
-		checkDirection(matrix, 1, 0); // below
-		checkDirection(matrix, 0, -1); // left
-		checkDirection(matrix, 0, 1); // right
-		checkDirection(matrix, -1, -1); // northwest
-		checkDirection(matrix, -1, 1); // northeast
-		checkDirection(matrix, 1, -1); // southwest
-		checkDirection(matrix, 1, 1); // southeast
+		checkDirection(matrix, -1, 0);
+		checkDirection(matrix, 1, 0); 
+		checkDirection(matrix, 0, -1);
+		checkDirection(matrix, 0, 1); 
+		checkDirection(matrix, -1, -1);
+		checkDirection(matrix, -1, 1); 
+		checkDirection(matrix, 1, -1); 
+		checkDirection(matrix, 1, 1); 
 
 		return matrix;
 	}
 
 	private void checkDirection(boolean[][] matrix, int rowIncrement, int columnIncrement) {
-		Position positionAux = new Position(position.getRow() + rowIncrement, position.getColunm() + columnIncrement);
+		
+		Position positionAux = new Position(position.getRow() + rowIncrement, position.getColumn() + columnIncrement);
 
 		if (getBoard().positionExists(positionAux) && canMove(positionAux))
-			matrix[positionAux.getRow()][positionAux.getColunm()] = true;
+			matrix[positionAux.getRow()][positionAux.getColumn()] = true;
 	}
 
 }// class King
