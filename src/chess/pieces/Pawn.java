@@ -7,83 +7,58 @@ import chess.Color;
 
 public class Pawn extends ChessPiece {
 
-	public Pawn(Board board, Color color) {
-		super(board, color);
-	}
+    public Pawn(Board board, Color color) {
+        super(board, color);
+    }
 
-	@Override
-	public boolean[][] possibleMoves() {
+    @Override
+    public String toString() {
+        return "P";
+    }
 
-		boolean[][] matrix = new boolean[getBoard().getRows()][getBoard().getColumns()];
+    @Override
+    public boolean[][] possibleMoves() {
+        
+    	boolean[][] matrix = new boolean[getBoard().getRows()][getBoard().getColumns()];
+        
+        if (getColor() == Color.WHITE)
+            checkPawnMoves(matrix, -1, -2);
+        else
+            checkPawnMoves(matrix, 1, 2);
 
-		if (getColor() == Color.WHITE)
-			checkWhitePawnMoves(matrix);
-		else
-			checkBlackPawnMoves(matrix);
+        return matrix;
+    }
 
-		return matrix;
-	}
+    private void checkPawnMoves(boolean[][] matrix, int forwardStep, int doubleStep) {
+    	
+        Position currentPos = super.position;
+        Position front = new Position(currentPos.getRow() + forwardStep, currentPos.getColumn());
 
-	private void checkWhitePawnMoves(boolean[][] matrix) {
-		
-		Position position = new Position(super.position.getRow(), super.position.getColumn());
+        if (canMove(front))
+            matrix[front.getRow()][front.getColumn()] = true;
 
-		Position front = new Position(position.getRow() - 1, position.getColumn());
-		
-		if (canMove(front))
-			matrix[front.getRow()][front.getColumn()] = true;
+        Position doubleFront = new Position(currentPos.getRow() + doubleStep, currentPos.getColumn());
+        
+        if (canMove(doubleFront) && canMove(front) && getMoveCount() == 0)
+            matrix[doubleFront.getRow()][doubleFront.getColumn()] = true;
 
-		Position doubleStep = new Position(position.getRow() - 2, position.getColumn());
-		
-		if (canMove(doubleStep) && canMove(front) && getMoveCount() == 0)
-			matrix[doubleStep.getRow()][doubleStep.getColumn()] = true;
+        checkCaptureMoves(matrix, currentPos, forwardStep, -1);
+        checkCaptureMoves(matrix, currentPos, forwardStep, 1);
+    }
 
-		Position leftCapture = new Position(position.getRow() - 1, position.getColumn() - 1);
-		
-		if (canCapture(leftCapture))
-			matrix[leftCapture.getRow()][leftCapture.getColumn()] = true;
+    private void checkCaptureMoves(boolean[][] matrix, Position currentPos, int forwardStep, int sideStep) {
+        
+    	Position capture = new Position(currentPos.getRow() + forwardStep, currentPos.getColumn() + sideStep);
+        
+        if (canCapture(capture))
+            matrix[capture.getRow()][capture.getColumn()] = true;
+    }
 
-		Position rightCapture = new Position(position.getRow() - 1, position.getColumn() + 1);
-		
-		if (canCapture(rightCapture))
-			matrix[rightCapture.getRow()][rightCapture.getColumn()] = true;
-	}
+    private boolean canMove(Position position) {
+        return getBoard().positionExists(position) && !getBoard().thereIsAPiece(position);
+    }
 
-	private void checkBlackPawnMoves(boolean[][] matrix) {
-
-		Position position = new Position(super.position.getRow(), super.position.getColumn());
-
-		Position front = new Position(position.getRow() + 1, position.getColumn());
-		if (canMove(front))
-			matrix[front.getRow()][front.getColumn()] = true;
-
-		Position doubleStep = new Position(position.getRow() + 2, position.getColumn());
-		
-		if (canMove(doubleStep) && canMove(front) && getMoveCount() == 0)
-			matrix[doubleStep.getRow()][doubleStep.getColumn()] = true;
-
-		Position leftCapture = new Position(position.getRow() + 1, position.getColumn() - 1);
-		
-		if (canCapture(leftCapture))
-			matrix[leftCapture.getRow()][leftCapture.getColumn()] = true;
-
-		Position rightCapture = new Position(position.getRow() + 1, position.getColumn() + 1);
-		
-		if (canCapture(rightCapture))
-			matrix[rightCapture.getRow()][rightCapture.getColumn()] = true;
-	}
-
-	private boolean canMove(Position position) {
-		return getBoard().positionExists(position) && !getBoard().thereIsAPiece(position);
-	}
-
-	private boolean canCapture(Position position) {
-		return getBoard().positionExists(position) && isThereOpponentPiece(position);
-	}
-
-	@Override
-	public String toString() {
-		return "P";
-	}
-
-}// class Pawn
+    private boolean canCapture(Position position) {
+        return getBoard().positionExists(position) && isThereOpponentPiece(position);
+    }
+}//class Pawn
