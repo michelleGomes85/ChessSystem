@@ -2,13 +2,18 @@ package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
 public class Pawn extends ChessPiece {
 
-    public Pawn(Board board, Color color) {
+	private ChessMatch chessMatch;
+	
+    public Pawn(Board board, Color color, ChessMatch chessMatch) {
         super(board, color);
+        
+        this.chessMatch = chessMatch;
     }
 
     @Override
@@ -21,15 +26,18 @@ public class Pawn extends ChessPiece {
         
     	boolean[][] matrix = new boolean[getBoard().getRows()][getBoard().getColumns()];
         
-        if (getColor() == Color.WHITE)
+        if (getColor() == Color.WHITE) {
             checkPawnMoves(matrix, -1, -2);
-        else
+            checkSpecialMovePassant(matrix, 3, -1);
+        } else {
             checkPawnMoves(matrix, 1, 2);
-
+            checkSpecialMovePassant(matrix, 4, 1);
+        }
+        
         return matrix;
     }
 
-    private void checkPawnMoves(boolean[][] matrix, int forwardStep, int doubleStep) {
+	private void checkPawnMoves(boolean[][] matrix, int forwardStep, int doubleStep) {
     	
         Position currentPos = super.position;
         Position front = new Position(currentPos.getRow() + forwardStep, currentPos.getColumn());
@@ -45,6 +53,22 @@ public class Pawn extends ChessPiece {
         checkCaptureMoves(matrix, currentPos, forwardStep, -1);
         checkCaptureMoves(matrix, currentPos, forwardStep, 1);
     }
+	
+    private void checkSpecialMovePassant(boolean[][] matrix, int row, int pace) {
+    	
+    	if (position.getRow() == row) {
+    		
+        	Position left = new Position(position.getRow(), position.getColumn() - 1);
+        	
+        	if (getBoard().positionExists(left) && isThereOpponentPiece(left) && getBoard().piece(left) == chessMatch.getEnPassantVulnerable())
+        		matrix[left.getRow() + pace][left.getColumn()] = true;
+        	
+        	Position right = new Position(position.getRow(), position.getColumn() + 1);
+        	
+        	if (getBoard().positionExists(right) && isThereOpponentPiece(right) && getBoard().piece(right) == chessMatch.getEnPassantVulnerable())
+        		matrix[right.getRow() + pace][right.getColumn()] = true;
+        }
+	}
 
     private void checkCaptureMoves(boolean[][] matrix, Position currentPos, int forwardStep, int sideStep) {
         
