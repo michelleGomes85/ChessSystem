@@ -23,7 +23,7 @@ public class ChessMatch {
 	private boolean checkMate;
 
 	private List<Piece> piecesOnTheBoard;
-	private List<Piece> capturedPieces;;
+	private List<Piece> capturedPieces;
 
 	public ChessMatch() {
 		board = new Board(8, 8);
@@ -99,35 +99,66 @@ public class ChessMatch {
 	}
 
 	private Piece makeMove(Position source, Position target) {
+		
+	    ChessPiece piece = (ChessPiece) board.removePiece(source);
+	    piece.increaseMoveCount();
 
-		ChessPiece piece = (ChessPiece) board.removePiece(source);
-		piece.increaseMoveCount();
+	    Piece capturedPiece = board.removePiece(target);
+	    board.placePiece(piece, target);
 
-		Piece capturedPiece = board.removePiece(target);
+	    if (capturedPiece != null) {
+	        piecesOnTheBoard.remove(capturedPiece);
+	        capturedPieces.add(capturedPiece);
+	    }
 
-		board.placePiece(piece, target);
+	    // Handle castling move
+	    handleCastling(source, target, piece, true);
 
-		if (capturedPiece != null) {
-			piecesOnTheBoard.remove(capturedPiece);
-			capturedPieces.add(capturedPiece);
-		}
-
-		return capturedPiece;
+	    return capturedPiece;
 	}
 
 	private void undoMove(Position source, Position target, Piece capturedPiece) {
+		
+	    ChessPiece piece = (ChessPiece) board.removePiece(target);
+	    piece.decreaseMoveCount();
 
-		ChessPiece piece = (ChessPiece) board.removePiece(target);
+	    board.placePiece(piece, source);
 
-		piece.decreaseMoveCount();
+	    if (capturedPiece != null) {
+	        board.placePiece(capturedPiece, target);
+	        capturedPieces.remove(capturedPiece);
+	        piecesOnTheBoard.add(capturedPiece);
+	    }
 
-		board.placePiece(piece, source);
+	    // Handle castling move
+	    handleCastling(source, target, piece, false);
+	}
 
-		if (capturedPiece != null) {
-			board.placePiece(capturedPiece, target);
-			capturedPieces.remove(capturedPiece);
-			piecesOnTheBoard.add(capturedPiece);
-		}
+	private void handleCastling(Position source, Position target, ChessPiece piece, boolean isMakeMove) {
+		
+	    int kingSideCastlingColumn = 2;
+	    int queenSideCastlingColumn = -2;
+
+	    if (piece instanceof King) {
+	        if (target.getColumn() == source.getColumn() + kingSideCastlingColumn)
+	            handleRookMove(source, 3, 1, isMakeMove);
+	        else if (target.getColumn() == source.getColumn() + queenSideCastlingColumn)
+	            handleRookMove(source, -4, -1, isMakeMove);
+	    }
+	}
+
+	private void handleRookMove(Position kingSource, int rookColumnOffset, int rookTargetOffset, boolean isMakeMove) {
+		
+	    Position sourceRook = new Position(kingSource.getRow(), kingSource.getColumn() + rookColumnOffset);
+	    Position targetRook = new Position(kingSource.getRow(), kingSource.getColumn() + rookTargetOffset);
+
+	    ChessPiece rook = (ChessPiece) board.removePiece(isMakeMove ? sourceRook : targetRook);
+	    board.placePiece(rook, isMakeMove ? targetRook : sourceRook);
+
+	    if (isMakeMove)
+	        rook.increaseMoveCount();
+	    else 
+	        rook.decreaseMoveCount();
 	}
 
 	private void validadeSourcePosition(Position position) {
@@ -232,7 +263,7 @@ public class ChessMatch {
 		placeNewPiece('b', 1, new Knight(board, Color.WHITE));
 		placeNewPiece('c', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('d', 1, new Queen(board, Color.WHITE));
-		placeNewPiece('e', 1, new King(board, Color.WHITE));
+		placeNewPiece('e', 1, new King(board, Color.WHITE, this));
 		placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('g', 1, new Knight(board, Color.WHITE));
 		placeNewPiece('h', 1, new Rook(board, Color.WHITE));
@@ -249,7 +280,7 @@ public class ChessMatch {
 		placeNewPiece('b', 8, new Knight(board, Color.BLACK));
 		placeNewPiece('c', 8, new Bishop(board, Color.BLACK));
 		placeNewPiece('d', 8, new Queen(board, Color.BLACK));
-		placeNewPiece('e', 8, new King(board, Color.BLACK));
+		placeNewPiece('e', 8, new King(board, Color.BLACK, this));
 		placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
 		placeNewPiece('g', 8, new Knight(board, Color.BLACK));
 		placeNewPiece('h', 8, new Rook(board, Color.BLACK));
