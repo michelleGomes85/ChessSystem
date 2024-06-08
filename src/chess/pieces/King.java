@@ -5,11 +5,23 @@ import boardgame.Position;
 import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
+import util.Pieces;
 
+/**
+ * Representa a peça Rei no jogo de xadrez.
+ */
 public class King extends ChessPiece {
 
 	private ChessMatch chessMatch;
 
+	/**
+	 * Cria uma nova peça Rei com o tabuleiro, a cor e o jogo de xadrez
+	 * especificados.
+	 * 
+	 * @param board      o tabuleiro em que a peça será colocada
+	 * @param color      a cor da peça (preta ou branca)
+	 * @param chessMatch o jogo de xadrez
+	 */
 	public King(Board board, Color color, ChessMatch chessMatch) {
 		super(board, color);
 		this.chessMatch = chessMatch;
@@ -17,21 +29,38 @@ public class King extends ChessPiece {
 
 	@Override
 	public String toString() {
-		return "K";
+		return Pieces.KING.getAcronym();
 	}
 
+	/**
+	 * Verifica se uma determinada posição pode ser movida pelo Rei.
+	 * 
+	 * @param position a posição a ser verificada
+	 * @return true se o Rei pode mover-se para a posição, false caso contrário
+	 */
 	private boolean canMove(Position position) {
 		ChessPiece piece = (ChessPiece) getBoard().piece(position);
 
 		return piece == null || piece.getColor() != getColor();
 	}
 
+	/**
+	 * Verifica se a torre na posição especificada pode fazer um roque.
+	 * 
+	 * @param position a posição da torre
+	 * @return true se a torre pode fazer um roque, false caso contrário
+	 */
 	private boolean testRookCastling(Position position) {
 		ChessPiece piece = (ChessPiece) getBoard().piece(position);
 
 		return piece != null && piece instanceof Rook && piece.getColor() == getColor() && piece.getMoveCount() == 0;
 	}
 
+	/**
+	 * Verifica e marca os movimentos possíveis do Rei.
+	 * 
+	 * @return uma matriz de booleanos com os movimentos possíveis
+	 */
 	@Override
 	public boolean[][] possibleMoves() {
 
@@ -58,6 +87,14 @@ public class King extends ChessPiece {
 		return matrix;
 	}
 
+	/**
+	 * Verifica e marca os movimentos possíveis do Rei em uma direção específica.
+	 * 
+	 * @param matrix          a matriz de booleanos que representa os movimentos
+	 *                        possíveis
+	 * @param rowIncrement    o incremento da linha na direção do movimento
+	 * @param columnIncrement o incremento da coluna na direção do movimento
+	 */
 	private void checkDirection(boolean[][] matrix, int rowIncrement, int columnIncrement) {
 
 		Position positionAux = new Position(position.getRow() + rowIncrement, position.getColumn() + columnIncrement);
@@ -66,6 +103,16 @@ public class King extends ChessPiece {
 			matrix[positionAux.getRow()][positionAux.getColumn()] = true;
 	}
 
+	/**
+	 * Verifica se o roque pode ser realizado e marca o movimento na matriz de
+	 * movimentos possíveis.
+	 * 
+	 * @param matrix              a matriz de booleanos que representa os movimentos
+	 *                            possíveis
+	 * @param rookColumnOffset    o deslocamento da coluna da torre
+	 * @param intermediateOffsets os deslocamentos intermediários entre o Rei e a
+	 *                            torre
+	 */
 	private void checkCastlingMove(boolean[][] matrix, int rookColumnOffset, int[] intermediateOffsets) {
 
 		Position rookPosition = new Position(position.getRow(), position.getColumn() + rookColumnOffset);
@@ -84,9 +131,7 @@ public class King extends ChessPiece {
 			}
 
 			if (pathClear)
-				matrix[position.getRow()][position.getColumn()
-						+ intermediateOffsets[1]] = true;
+				matrix[position.getRow()][position.getColumn() + intermediateOffsets[1]] = true;
 		}
 	}
-
 }// class King

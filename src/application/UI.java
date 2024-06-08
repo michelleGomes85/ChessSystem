@@ -11,126 +11,159 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
 
+import static util.Messages.*;
+
+/**
+ * Classe utilitária para manipulação da interface do usuário no jogo de xadrez.
+ */
 public class UI {
 
-	public static final String ANSI_RESET = "\u001B[0m";
-	public static final String ANSI_BLACK = "\u001B[30m";
-	public static final String ANSI_RED = "\u001B[31m";
-	public static final String ANSI_GREEN = "\u001B[32m";
-	public static final String ANSI_YELLOW = "\u001B[33m";
-	public static final String ANSI_BLUE = "\u001B[34m";
-	public static final String ANSI_PURPLE = "\u001B[35m";
-	public static final String ANSI_CYAN = "\u001B[36m";
-	public static final String ANSI_WHITE = "\u001B[37m";
-
-	public static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
-	public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
-	public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
-	public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
-	public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
-	public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
-	public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
-	public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
-	
+	/**
+	 * Limpa a tela do console.
+	 */
 	public static void clearScreen() {
-		System.out.print("\033[H\033[2J");
+		System.out.print(ANSI_CLEAR_SCREEN);
 		System.out.flush();
 	}
-	
+
+	/**
+	 * Lê uma posição de xadrez da entrada do usuário.
+	 * 
+	 * @param scanner O objeto Scanner usado para ler a entrada.
+	 * @return A posição de xadrez lida.
+	 * @throws InputMismatchException Se a entrada não for válida.
+	 */
 	public static ChessPosition readChessPosition(Scanner scanner) {
-		
+
 		try {
 			String str = scanner.nextLine();
 			char column = str.charAt(0);
 			int row = Integer.parseInt(str.substring(1));
-			
+
 			return new ChessPosition(column, row);
-		}catch (RuntimeException e) {
-			throw new InputMismatchException("Error reading ChessPosition. Valid values are from a1 to h8");
+		} catch (RuntimeException e) {
+			throw new InputMismatchException(MSG_ERROR_READING_POSITION);
 		}
 	}
-	
+
+	/**
+	 * Imprime o estado atual da partida de xadrez, incluindo o tabuleiro, as peças capturadas e o estado do jogo.
+	 * 
+	 * @param chessMatch O objeto ChessMatch que representa a partida de xadrez.
+	 * @param captured A lista de peças capturadas.
+	 */
 	public static void printMatch(ChessMatch chessMatch, List<ChessPiece> captured) {
-		
+
 		printBoard(chessMatch.getPieces());
-		
+
 		System.out.println();
 		printCapturedPieces(captured);
 		System.out.println();
-		
-		System.out.println("Turn: " + chessMatch.getTurn());
-		
+
+		System.out.println(MSG_TURN_PROMPT + chessMatch.getTurn());
+
 		if (!chessMatch.isCheckMate()) {
-			System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
-		
+			System.out.println(MSG_WAITING_PLAYER + chessMatch.getCurrentPlayer());
+
 			if (chessMatch.isCheck())
-				System.out.println("CHECK");
-		}else {
-			System.out.println("CHECKMATE!");
-			System.out.println("Winner: " + chessMatch.getCurrentPlayer());
+				System.out.println(CHECK);
+		} else {
+			System.out.println(CHECK_MATE);
+			System.out.println(WINNER + chessMatch.getCurrentPlayer());
 		}
-			
+
 	}
 
+	/**
+	 * Imprime o tabuleiro de xadrez com as peças na tela.
+	 * 
+	 * @param pieces A matriz de peças no tabuleiro.
+	 */
 	public static void printBoard(ChessPiece[][] pieces) {
 
 		System.out.println();
 
 		for (int i = 0; i < pieces.length; i++) {
 
-			System.out.print("\t" + (8 - i) + " ");
+			System.out.print(TAB + (8 - i) + SPACE);
 			for (int j = 0; j < pieces.length; j++)
 				printPiece(pieces[i][j], false);
 
 			System.out.println();
 		}
 
-		System.out.println("\t  a b c d e f g h");
+		System.out.println(COLUMN_HEADERS);
 	}
-	
+
+	/**
+	 * Imprime o tabuleiro de xadrez com as peças na tela, destacando os movimentos possíveis.
+	 * 
+	 * @param pieces A matriz de peças no tabuleiro.
+	 * @param possibleMoves A matriz de movimentos possíveis.
+	 */
 	public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
-		
+
 		System.out.println();
 
 		for (int i = 0; i < pieces.length; i++) {
 
-			System.out.print("\t" + (8 - i) + " ");
+			System.out.print(TAB + (8 - i) + SPACE);
 			for (int j = 0; j < pieces.length; j++)
 				printPiece(pieces[i][j], possibleMoves[i][j]);
 
 			System.out.println();
 		}
 
-		System.out.println("\t  a b c d e f g h");
+		System.out.println(COLUMN_HEADERS);
 	}
 
+	/**
+	 * Imprime uma peça de xadrez na tela, com a cor de fundo opcional.
+	 * 
+	 * @param piece A peça a ser impressa.
+	 * @param background Se deve ou não destacar o fundo.
+	 */
 	private static void printPiece(ChessPiece piece, boolean background) {
-		
+
 		if (background)
 			System.out.print(ANSI_BLUE_BACKGROUND);
-		
+
 		if (piece == null)
-			System.out.print("-" + ANSI_RESET);
+			System.out.print(WITHOUT_PIECE + ANSI_RESET);
 		else
 			System.out.print((piece.getColor() == Color.WHITE ? ANSI_WHITE : ANSI_YELLOW) + piece + ANSI_RESET);
-			
-		System.out.print(" ");
-	}
-	
-    private static void printCapturedPieces(List<ChessPiece> captured) {
-        List<ChessPiece> white = captured.stream().filter(x -> x.getColor() == Color.WHITE).collect(Collectors.toList());
-        List<ChessPiece> black = captured.stream().filter(x -> x.getColor() == Color.BLACK).collect(Collectors.toList());
-        
-        System.out.println("Captured Pieces");
-        printColoredPieces("White", white, ANSI_WHITE);
-        printColoredPieces("Black", black, ANSI_YELLOW);
-    }
 
-    private static void printColoredPieces(String colorName, List<ChessPiece> pieces, String colorCode) {
-        System.out.print(colorName + ": ");
-        System.out.print(colorCode);
-        System.out.print(Arrays.toString(pieces.toArray()));
-        System.out.println(ANSI_RESET);
-    }
+		System.out.print(SPACE);
+	}
+
+    /**
+     * Imprime as peças capturadas na tela.
+     * 
+     * @param captured A lista de peças capturadas.
+     */
+	private static void printCapturedPieces(List<ChessPiece> captured) {
+		List<ChessPiece> white = captured.stream().filter(x -> x.getColor() == Color.WHITE)
+				.collect(Collectors.toList());
+		List<ChessPiece> black = captured.stream().filter(x -> x.getColor() == Color.BLACK)
+				.collect(Collectors.toList());
+
+		System.out.println(CAPTURED_PIECES);
+		printColoredPieces(Color.WHITE.getTitle(), white, ANSI_WHITE);
+		printColoredPieces(Color.BLACK.getTitle(), black, ANSI_YELLOW);
+	}
+
+    /**
+     * Imprime as peças capturadas de uma determinada cor na tela.
+     * 
+     * @param colorName O nome da cor das peças.
+     * @param pieces A lista de peças capturadas.
+     * @param colorCode O código de cor ANSI para as peças.
+     */
+	private static void printColoredPieces(String colorName, List<ChessPiece> pieces, String colorCode) {
+		System.out.print(colorName + TWO_DOTS);
+		System.out.print(colorCode);
+		System.out.print(Arrays.toString(pieces.toArray()));
+		System.out.println(ANSI_RESET);
+	}
 
 }// class UI
