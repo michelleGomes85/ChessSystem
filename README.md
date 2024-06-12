@@ -55,8 +55,49 @@ O projeto está organizado nas seguintes pastas e arquivos:
 
 ## Como Jogar
 1. O tabuleiro será exibido no terminal.
-2. Você será solicitado a inserir a posição de origem e a posição de destino das peças.
-3. Para promover um peão, insira a letra correspondente à peça desejada (B para Bispo, N para Cavalo, R para Torre, Q para Rainha).
-4. O jogo terminará quando ocorrer um cheque-mate.
 
-OBS.: Melhor experiência em um terminal colorido
+      ```
+            8 R N B Q K B N R
+            7 P P P P P P P P
+            6 - - - - - - - -
+            5 - - - - - - - -
+            4 - - - - - - - -
+            3 - - - - - - - -
+            2 P P P P P P P P
+            1 R N B Q K B N R
+              a b c d e f g h
+
+        Captured Pieces
+        White: []
+        Black: []
+        
+        Turn: 1
+        Waiting player: WHITE
+        
+        Source:
+
+      ```
+   
+3. Você será solicitado a inserir a posição de origem e a posição de destino das peças.
+
+      ```
+            8 R N B Q K B N R
+            7 P P P P P P P P
+            6 - - - - - - - -
+            5 - - - - - - - -
+            4 - - - - - - - -
+            3 - - - - - - - -
+            2 P P P P P P P P
+            1 R N B Q K B N R
+              a b c d e f g h
+
+        Target:
+
+      ```
+   
+5. Para promover um peão, insira a letra correspondente à peça desejada (B para Bispo, N para Cavalo, R para Torre, Q para Rainha).
+6. O jogo terminará quando ocorrer um cheque-mate.
+
+Para a melhor experiência, recomenda-se usar um terminal colorido, como o Git Bash. 
+Nesse ambiente, os jogadores serão diferenciados por cores: um será marcado como "WHITE" e o outro como "BLACK" aqui representado pelo cor amarela. 
+Além disso, ao selecionar uma peça, o terminal destacará as possíveis movimentações dessa peça, facilitando a visualização e o planejamento das jogadas.
