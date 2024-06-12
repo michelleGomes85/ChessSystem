@@ -47,11 +47,11 @@ O projeto está organizado nas seguintes pastas e arquivos:
 
 1. Clone o repositório para sua máquina local:
    ```bash
-   git clone https://github.com/seu-usuario/chess-game.git
+   git clone https://github.com/seu-usuario/ChessSystem.git
 
 2. Execute o jogo:
    ```bash
-   java application/Program.java
+   java application/Program
 
 ## Como Jogar
 1. O tabuleiro será exibido no terminal.
