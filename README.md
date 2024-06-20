@@ -1,5 +1,7 @@
 # Chess Game
 
+[![NPM](https://img.shields.io/npm/l/react)](https://github.com/michelleGomes85/ChessSystem/blob/main/LICENSE) 
+
 Este é um projeto de um jogo de xadrez desenvolvido em Java. O objetivo é permitir que dois jogadores joguem uma partida de xadrez através de um terminal, utilizando as regras tradicionais do jogo.
 
 ## Estrutura do Projeto
